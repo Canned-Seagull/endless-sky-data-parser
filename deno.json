@@ -1,0 +1,7 @@
+{
+  "exports": "./mod.ts",
+  "tasks": {
+    "format": "deno fmt",
+    "lint": "deno lint"
+  }
+}
