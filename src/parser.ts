@@ -77,8 +77,7 @@ export class Parser {
   peekIndentation(): number {
     let indentation = 0;
     let offset = 0;
-    console.log(this.peek());
-    console.log(this.currentPos);
+    
     while (this.lookahead(offset).type !== TokenType.TOKEN) {
       if (this.lookahead(offset).type === TokenType.EOF) break;
       else if (this.lookahead(offset).type === TokenType.NEWLINE) {
