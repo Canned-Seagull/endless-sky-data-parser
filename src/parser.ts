@@ -74,7 +74,7 @@ export class Parser {
     return this.tokens[this.currentPos + offset];
   }
 
-  peekIndentation(): number {
+  private peekIndentation(): number {
     let indentation = 0;
     let offset = 0;
     
