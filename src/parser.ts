@@ -13,7 +13,7 @@ export class Parser {
   parse(): DataNode {
     const children = [];
 
-    while (!this.isAtEnd()) children.push(this.parseNode());
+    while (!this.peekEnd()) children.push(this.parseNode());
 
     return new DataNode([], children);
   }
@@ -91,6 +91,7 @@ export class Parser {
 
     return indentation;
   }
+
 
   consume(): Token {
     return this.tokens[this.currentPos++];
