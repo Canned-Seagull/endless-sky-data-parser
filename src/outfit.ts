@@ -1,5 +1,5 @@
 import { DataNode } from "./data_node.ts";
-import { errorAtDataFileLine } from "./error.ts";
+import { errorAtLine } from "./error.ts";
 import { GameData } from "./game_data.ts";
 import { isEsNumber, parseEsNumber } from "./parser.ts";
 
@@ -13,7 +13,7 @@ export class Outfit {
   // Constructs a new outfit from a given data node
   constructor(gameData: GameData, dataNode: DataNode) {
     if (dataNode.tokens.length < 2) {
-      errorAtDataFileLine(
+      errorAtLine(
         dataNode.tokens[0].line,
         "Outfit node has less than two tokens",
       );
