@@ -1,5 +1,7 @@
+import { DataFile } from "./data_file.ts";
 import { DataNode } from "./data_node.ts";
-import { warnAtLine } from "./error.ts";
+import { DataSource } from "./data_source.ts";
+import { warnAtDataFileLine } from "./error.ts";
 import { Outfit } from "./outfit.ts";
 import { Ship } from "./ship.ts";
 
@@ -8,7 +10,21 @@ export class GameData {
   readonly outfits = new Map<string, Outfit>();
   readonly ships = new Map<string, Ship>();
 
-  loadRootNode(rootNode: DataNode): void {
+  readonly sources: DataSource[] = [];
+
+  /**
+   * Loads all the data within the data files in a data source.
+   * @param {DataSource} dataSource - Source of the data
+   */
+  async loadDataSource(dataSource: DataSource): Promise<void> {
+    const dataFiles = await dataSource.loadData();
+
+    dataFiles.forEach((file) => this.loadDataFile(file));
+  }
+
+  loadDataFile(dataFile: DataFile): void {
+    const rootNode = dataFile.rootNode;
+
     for (const childNode of rootNode.children) {
       const nodeName = childNode.tokens[0].value;
 
@@ -20,7 +36,11 @@ export class GameData {
           this.loadShipNode(childNode);
           break;
         default:
-          warnAtLine(childNode.tokens[0].line, "Unsupported node");
+          warnAtDataFileLine(
+            dataFile,
+            childNode.tokens[0].line,
+            "Unsupported node",
+          );
       }
     }
   }

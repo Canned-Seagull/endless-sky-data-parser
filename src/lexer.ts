@@ -1,4 +1,5 @@
-import { errorAtLine } from "./error.ts";
+import { DataFile } from "./data_file.ts";
+import { errorAtDataFileLine } from "./error.ts";
 
 export enum TokenType {
   TOKEN,
@@ -45,13 +46,15 @@ export class EofToken extends Token {
 }
 
 export class Lexer {
+  private readonly dataFile: DataFile;
   private readonly source: string;
   private readonly tokens: Token[] = [];
   private startPos = 0;
   private currentPos = 0;
   private currentLine = 0;
 
-  constructor(source: string) {
+  constructor(dataFile: DataFile, source: string) {
+    this.dataFile = dataFile;
     this.source = source;
   }
 
@@ -97,14 +100,24 @@ export class Lexer {
   private quotedToken(): void {
     while (this.peek() !== '"' && !this.isAtEnd()) {
       if (this.peek() === "\n") {
-        errorAtLine(this.currentLine, "Unexpected newline");
+        errorAtDataFileLine(
+          this.dataFile,
+          this.currentLine,
+          "Unexpected newline",
+        );
       }
 
       this.consume();
     }
 
     // Endless Sky does not treat this as a fatal error
-    if (this.isAtEnd()) errorAtLine(this.currentLine, "Unterminated string");
+    if (this.isAtEnd()) {
+      errorAtDataFileLine(
+        this.dataFile,
+        this.currentLine,
+        "Unterminated string",
+      );
+    }
 
     this.consume();
     const value = this.source.slice(this.startPos + 1, this.currentPos - 1);
@@ -114,14 +127,24 @@ export class Lexer {
   private backtickedToken(): void {
     while (this.peek() !== "`" && !this.isAtEnd()) {
       if (this.peek() === "\n") {
-        errorAtLine(this.currentLine, "Unexpected newline");
+        errorAtDataFileLine(
+          this.dataFile,
+          this.currentLine,
+          "Unexpected newline",
+        );
       }
 
       this.consume();
     }
 
     // Endless Sky does not treat this as a fatal error
-    if (this.isAtEnd()) errorAtLine(this.currentLine, "Unterminated string");
+    if (this.isAtEnd()) {
+      errorAtDataFileLine(
+        this.dataFile,
+        this.currentLine,
+        "Unterminated string",
+      );
+    }
 
     this.consume();
     const value = this.source.slice(this.startPos + 1, this.currentPos - 1);

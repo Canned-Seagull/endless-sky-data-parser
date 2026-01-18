@@ -1,12 +1,15 @@
+import { DataFile } from "./data_file.ts";
 import { DataNode } from "./data_node.ts";
-import { errorAtLine } from "./error.ts";
+import { errorAtDataFileLine } from "./error.ts";
 import { ItemToken, Token, TokenType } from "./lexer.ts";
 
 export class Parser {
+  private readonly dataFile: DataFile;
   private readonly tokens: Token[];
   private currentPos = 0;
 
-  constructor(tokens: Token[]) {
+  constructor(dataFile: DataFile, tokens: Token[]) {
+    this.dataFile = dataFile;
     this.tokens = tokens;
   }
 
@@ -28,9 +31,12 @@ export class Parser {
       if (token instanceof ItemToken) tokens.push(token);
     }
 
-    // Missing newline at the end of the file
     if (this.isAtEnd()) {
-      errorAtLine(this.peek().line, "Missing newline at the end of file");
+      errorAtDataFileLine(
+        this.dataFile,
+        this.peek().line,
+        "Missing newline at the end of file",
+      );
     }
 
     this.consume();
@@ -57,7 +63,11 @@ export class Parser {
         nextNextIndentation > indentation &&
         nextNextIndentation !== nextIndentation
       ) {
-        errorAtLine(this.peek().line, "Unequal indentation");
+        errorAtDataFileLine(
+          this.dataFile,
+          this.peek().line,
+          "Unequal indentation",
+        );
       }
 
       nextIndentation = nextNextIndentation;
@@ -77,7 +87,7 @@ export class Parser {
   private peekIndentation(): number {
     let indentation = 0;
     let offset = 0;
-    
+
     while (this.lookahead(offset).type !== TokenType.TOKEN) {
       if (this.lookahead(offset).type === TokenType.EOF) break;
       else if (this.lookahead(offset).type === TokenType.NEWLINE) {
@@ -92,6 +102,17 @@ export class Parser {
     return indentation;
   }
 
+  private peekEnd(): boolean {
+    let offset = 0;
+
+    while (this.lookahead(offset).type !== TokenType.TOKEN) {
+      if (this.lookahead(offset).type === TokenType.EOF) return true;
+
+      offset++;
+    }
+
+    return false;
+  }
 
   consume(): Token {
     return this.tokens[this.currentPos++];
