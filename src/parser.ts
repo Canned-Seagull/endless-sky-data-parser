@@ -24,13 +24,13 @@ export class Parser {
     const tokens = [];
 
     while (!this.isAtEnd() && this.peek().type !== TokenType.NEWLINE) {
-      // Missing newline at the end of the file
-      if (this.isAtEnd()) {
-        errorAtLine(this.peek().line, "Missing newline at the end of file");
-      }
-
       const token = this.consume();
       if (token instanceof ItemToken) tokens.push(token);
+    }
+
+    // Missing newline at the end of the file
+    if (this.isAtEnd()) {
+      errorAtLine(this.peek().line, "Missing newline at the end of file");
     }
 
     this.consume();
