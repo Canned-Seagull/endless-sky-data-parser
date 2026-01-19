@@ -1,5 +1,5 @@
 {
-  "version": "4",
+  "version": "5",
   "specifiers": {
     "npm:octokit@^5.0.5": "5.0.5_@octokit+core@7.0.6"
   },
