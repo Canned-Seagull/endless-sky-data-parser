@@ -10,13 +10,15 @@ export class GameData {
   readonly outfits = new Map<string, Outfit>();
   readonly ships = new Map<string, Ship>();
 
-  readonly sources: DataSource[] = [];
+  dataSource?: DataSource;
 
   /**
    * Loads all the data within the data files in a data source.
    * @param {DataSource} dataSource - Source of the data
    */
   async loadDataSource(dataSource: DataSource): Promise<void> {
+    this.dataSource = dataSource;
+
     const dataFiles = await dataSource.loadData();
 
     dataFiles.forEach((file) => this.loadDataFile(file));
