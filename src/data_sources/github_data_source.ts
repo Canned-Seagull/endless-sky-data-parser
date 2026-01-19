@@ -58,17 +58,17 @@ export class GitHubDataSource implements DataSource {
 
     if (!dataDir) throw new Error("No data directory found");
 
-    for (
-      const file of rootTree.data.tree.filter((file) =>
-        file.path.startsWith("data/") && file.type === "blob"
-      )
-    ) {
-      const content = await fetch(
-        `https://raw.githubusercontent.com/${this.owner}/${this.repo}/${this.ref}/${file.path}`,
-      )
-        .then((response) => response.text());
-      this.dataFiles.set(file.path, new DataFile(file.path, content, this));
-    }
+    await Promise.all(
+      rootTree.data.tree
+        .filter((file) => file.path.startsWith("data/") && file.type === "blob")
+        .map(async (file) => {
+          const content = await fetch(
+            `https://raw.githubusercontent.com/${this.owner}/${this.repo}/${this.ref}/${file.path}`,
+          )
+            .then((response) => response.text());
+          this.dataFiles.set(file.path, new DataFile(file.path, content, this));
+        }),
+    );
 
     return this.dataFiles;
   }
