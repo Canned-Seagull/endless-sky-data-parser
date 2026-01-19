@@ -1,4 +1,5 @@
 {
+  "name": "@cannedseagull/endless-sky-data-parser",
   "exports": "./mod.ts",
   "tasks": {
     "format": "deno fmt",
