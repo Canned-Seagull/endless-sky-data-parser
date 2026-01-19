@@ -10,6 +10,11 @@ export interface DataSource {
   getName(): string;
 
   /**
+   * Data files in a source.
+   */
+  dataFiles: Map<string, DataFile>;
+
+  /**
    * Loads data from the source.
    */
   loadData(): Promise<Map<string, DataFile>>;
