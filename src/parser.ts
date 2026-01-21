@@ -1,7 +1,8 @@
-import { DataFile } from "./data_file.ts";
+import type { DataFile } from "./data_file.ts";
 import { DataNode } from "./data_node.ts";
 import { errorAtDataFileLine } from "./error.ts";
-import { ItemToken, Token, TokenType } from "./lexer.ts";
+import type { Token } from "./lexer.ts";
+import { ItemToken, TokenType } from "./lexer.ts";
 
 export class Parser {
   private readonly dataFile: DataFile;

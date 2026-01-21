@@ -1,4 +1,4 @@
-import { DataNode } from "./data_node.ts";
+import type { DataNode } from "./data_node.ts";
 
 // Serialise a data node into data file source
 export function serialiseDataNode(node: DataNode): string {

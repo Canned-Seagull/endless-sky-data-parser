@@ -1,6 +1,6 @@
-import { DataNode } from "./data_node.ts";
+import type { DataNode } from "./data_node.ts";
 import { errorAtLine } from "./error.ts";
-import { GameData } from "./game_data.ts";
+import type { GameData } from "./game_data.ts";
 import { dataNodesToKeyNumberPairs } from "./utilities.ts";
 
 export class Ship {
@@ -12,7 +12,7 @@ export class Ship {
   private readonly baseAttributes: Map<string, number>[] = [];
   private readonly addAttributes: Map<string, number>[] = [];
 
-  readonly outfits = new Map<string, number>();
+  readonly outfits: Map<string, number> = new Map<string, number>();
 
   readonly gameData: GameData;
   readonly dataNode: DataNode;

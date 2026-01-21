@@ -1,4 +1,4 @@
-import { ItemToken } from "./lexer.ts";
+import type { ItemToken } from "./lexer.ts";
 
 export class DataNode {
   readonly tokens: ItemToken[] = [];

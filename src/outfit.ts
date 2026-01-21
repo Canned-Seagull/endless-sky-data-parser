@@ -1,11 +1,11 @@
-import { DataNode } from "./data_node.ts";
+import type { DataNode } from "./data_node.ts";
 import { errorAtLine } from "./error.ts";
-import { GameData } from "./game_data.ts";
+import type { GameData } from "./game_data.ts";
 import { isEsNumber, parseEsNumber } from "./parser.ts";
 
 export class Outfit {
   readonly name: string;
-  readonly attributes = new Map<string, number>();
+  readonly attributes: Map<string, number> = new Map<string, number>();
 
   readonly gameData: GameData;
   readonly dataNode: DataNode;

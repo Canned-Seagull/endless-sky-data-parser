@@ -1,4 +1,4 @@
-import { DataFile } from "./data_file.ts";
+import type { DataFile } from "./data_file.ts";
 
 /**
  * A source containing a collection of data files.

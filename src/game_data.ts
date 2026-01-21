@@ -1,14 +1,14 @@
-import { DataFile } from "./data_file.ts";
-import { DataNode } from "./data_node.ts";
-import { DataSource } from "./data_source.ts";
+import type { DataFile } from "./data_file.ts";
+import type { DataNode } from "./data_node.ts";
+import type { DataSource } from "./data_source.ts";
 import { warnAtDataFileLine } from "./error.ts";
 import { Outfit } from "./outfit.ts";
 import { Ship } from "./ship.ts";
 
 // Object containing all the data in the game
 export class GameData {
-  readonly outfits = new Map<string, Outfit>();
-  readonly ships = new Map<string, Ship>();
+  readonly outfits: Map<string, Outfit> = new Map<string, Outfit>();
+  readonly ships: Map<string, Ship> = new Map<string, Ship>();
 
   dataSource?: DataSource;
 

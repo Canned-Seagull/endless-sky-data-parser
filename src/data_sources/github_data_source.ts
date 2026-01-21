@@ -8,7 +8,7 @@ export class GitHubDataSource implements DataSource {
   readonly repo: string;
   readonly ref: string;
 
-  readonly dataFiles = new Map<string, DataFile>();
+  readonly dataFiles: Map<string, DataFile> = new Map<string, DataFile>();
 
   /**
    * Constructs a loader that loads files from a GitHub repository.

@@ -1,5 +1,5 @@
-import { DataNode } from "./data_node.ts";
-import { DataSource } from "./data_source.ts";
+import type { DataNode } from "./data_node.ts";
+import type { DataSource } from "./data_source.ts";
 import { Lexer } from "./lexer.ts";
 import { Parser } from "./parser.ts";
 

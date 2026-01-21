@@ -1,4 +1,4 @@
-import { DataFile } from "./data_file.ts";
+import type { DataFile } from "./data_file.ts";
 
 function prettyFileName(dataFile: DataFile): string {
   return `${dataFile.dataSource?.getName() ?? ""}/${dataFile.path}`;
