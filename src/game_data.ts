@@ -47,6 +47,15 @@ export class GameData {
     }
   }
 
+  /**
+   * Returns whether at least one data source is loaded.
+   *
+   * @returns {boolean} Whether the game as at least one data source loaded
+   */
+  hasLoaded(): boolean {
+    return Boolean(this.dataSource);
+  }
+
   private loadOutfitNode(node: DataNode): void {
     const outfit = new Outfit(this, node);
     this.outfits.set(outfit.name, outfit);
