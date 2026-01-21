@@ -1,13 +1,17 @@
 import { DataNode } from "./data_node.ts";
 import { errorAtLine } from "./error.ts";
 import { GameData } from "./game_data.ts";
-import { isEsNumber, parseEsNumber } from "./parser.ts";
+import { dataNodesToKeyNumberPairs } from "./utilities.ts";
 
 export class Ship {
   readonly name: string;
   readonly baseName: string;
   readonly variantName?: string;
-  readonly attributes = new Map<string, number>();
+  readonly isVariant: boolean;
+
+  private readonly baseAttributes: Map<string, number>[] = [];
+  private readonly addAttributes: Map<string, number>[] = [];
+
   readonly outfits = new Map<string, number>();
 
   readonly gameData: GameData;
@@ -25,97 +29,84 @@ export class Ship {
     this.dataNode = dataNode;
 
     this.baseName = dataNode.tokens[1].value;
-    this.name = this.baseName;
 
-    if (dataNode.tokens.length === 2) {
-      // This is a base ship
+    this.isVariant = dataNode.tokens.length >= 3;
 
-      for (const childNode of dataNode.children) {
-        const childName = childNode.tokens[0].value;
-        if (childName === "attributes") {
-          for (const attributeNode of childNode.children) {
-            const tokens = attributeNode.tokens;
-
-            if (tokens.length < 2) continue;
-
-            if (!isEsNumber(tokens[1].value)) continue;
-
-            this.attributes.set(
-              tokens[0].value,
-              parseEsNumber(tokens[1].value),
-            );
-          }
-        }
-      }
-    } else if (dataNode.tokens.length === 3) {
-      // This is a variant
+    // This is a variant
+    if (this.isVariant) {
       this.variantName = dataNode.tokens[2].value;
-      this.name = this.variantName;
 
       // Get base ship
       const baseShip = gameData.ships.get(this.baseName);
+      if (!baseShip) throw new Error("Base ship not found");
+
       // It is not recommended to derive a variant off another variant
-      if (baseShip?.variantName) {
+      if (baseShip.isVariant) {
         console.warn("Deriving a variant ship off another variant");
       }
-      // Copy base attributes
-      baseShip?.attributes.forEach((value, attribute) =>
-        this.attributes.set(attribute, value)
-      );
-
-      dataNode.children
-        .find((childNode) =>
-          childNode.tokens[0].value === "add" &&
-          childNode.tokens[1]?.value === "attributes"
-        )?.children
-        .forEach((attributeNode) => {
-          if (attributeNode.tokens.length < 2) return;
-
-          const attribute = attributeNode.tokens[0].value;
-          const value = attributeNode.tokens[1].value;
-          if (!isEsNumber(value)) return;
-          this.attributes.set(
-            attribute,
-            (this.attributes.get(attribute) ?? 0) + parseEsNumber(value),
-          );
-        });
-    } else {
-      errorAtLine(
-        dataNode.tokens[0].line,
-        "Ship node has more then three tokens",
-      );
     }
 
-    // Set outfits
-    dataNode.children
-      .find((childNode) => childNode.tokens[0].value === "outfits")?.children
-      .forEach((outfitNode) => {
-        const tokens = outfitNode.tokens;
+    this.name = this.variantName ?? this.baseName;
 
-        // Set the outfit, defaulting to a count of 1
-        this.outfits.set(
-          tokens[0].value,
-          tokens.length >= 2 ? parseEsNumber(tokens[1].value) : 1,
-        );
-      });
+    for (const childNode of dataNode.children) {
+      if (childNode.tokens[0].value === "attributes") {
+        // Set attributes
+        this.baseAttributes.push(dataNodesToKeyNumberPairs(childNode.children));
+      } else if (
+        childNode.tokens[0].value === "add" &&
+        childNode.tokens[1]?.value === "attributes"
+      ) {
+        // Set add attributes
+        this.addAttributes.push(dataNodesToKeyNumberPairs(childNode.children));
+      } else if (childNode.tokens[0].value === "outfits") {
+        this.outfits = dataNodesToKeyNumberPairs(childNode.children, 1);
+      } else console.warn("Unsupported node");
+    }
   }
 
   clone(): Ship {
     return new Ship(this.gameData, this.dataNode);
   }
 
-  getAttribute(attributeName: string): number {
-    return this.outfits
-      .entries()
-      .reduce(
-        (value, [outfitName, count]) =>
-          value +
-          (this.gameData.outfits.get(outfitName)?.attributes.get(
-              attributeName,
-            ) ?? 0) *
-            count,
-        this.attributes.get(attributeName) ?? 0,
+  get attributes(): Map<string, number> {
+    const attributes = new Map<string, number>();
+
+    if (this.isVariant) {
+      const baseShip = this.gameData.ships.get(this.baseName);
+      if (!baseShip) throw new Error("Base ship not found");
+
+      // Initialise attributes with the base ship's attributes
+      baseShip.attributes.forEach((value, attribute) =>
+        attributes.set(attribute, value)
       );
+    }
+
+    // For each base attribute, override existing attribute
+    this.baseAttributes.forEach((base) => {
+      base.forEach((value, attribute) => attributes.set(attribute, value));
+    });
+
+    // For each add attribute, add on existing attribute
+    this.addAttributes.forEach((add) => {
+      add.forEach((value, attribute) =>
+        attributes.set(attribute, (attributes.get(attribute) ?? 0) + value)
+      );
+    });
+
+    // For each outfit, add on existing attribute
+    this.outfits.forEach((count, outfitName) => {
+      const outfit = this.gameData.outfits.get(outfitName);
+      if (!outfit) throw new Error("Outfit not found: " + outfitName);
+
+      outfit.attributes.forEach((value, attribute) =>
+        attributes.set(
+          attribute,
+          (attributes.get(attribute) ?? 0) + value * count,
+        )
+      );
+    });
+
+    return attributes;
   }
 
   getOutfitCount(outfitName: string): number {
