@@ -9,14 +9,14 @@ export class GameData {
   public readonly outfits: Map<string, Outfit> = new Map<string, Outfit>();
   public readonly ships: Map<string, Ship> = new Map<string, Ship>();
 
-  public dataSource?: DataSource;
+  public dataSources: DataSource[] = [];
 
   /**
    * Loads all the data within the data files in a data source.
    * @param {DataSource} dataSource - Source of the data
    */
   public async loadDataSource(dataSource: DataSource): Promise<void> {
-    this.dataSource = dataSource;
+    this.dataSources.push(dataSource);
 
     const dataFiles = await dataSource.loadData();
 
@@ -42,10 +42,10 @@ export class GameData {
   /**
    * Returns whether at least one data source is loaded.
    *
-   * @returns {boolean} Whether the game as at least one data source loaded
+   * @returns {boolean} - Whether the game as at least one data source loaded
    */
   public hasLoaded(): boolean {
-    return Boolean(this.dataSource);
+    return this.dataSources.length > 0;
   }
 
   private loadOutfitNode(node: DataNode): void {
