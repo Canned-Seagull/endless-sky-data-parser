@@ -27,20 +27,26 @@ export class GameData {
 
     const dataFiles = await dataSource.loadData();
 
-    dataFiles.forEach((file) => this.loadDataFile(file));
+    dataFiles.forEach((file) => this.loadDataFileOutfits(file));
+    dataFiles.forEach((file) => this.loadDataFileShips(file));
   }
 
   public loadDataFile(dataFile: DataFile): void {
-    const rootNode = dataFile.rootNode;
-
     // Load outfits first, as ships depend on them
-    rootNode.children.filter(
+    this.loadDataFileOutfits(dataFile);
+    // Load ships after outfits
+    this.loadDataFileShips(dataFile);
+  }
+
+  private loadDataFileOutfits(dataFile: DataFile): void {
+    dataFile.rootNode.children.filter(
       (childNode) => childNode.tokens[0].value === "outfit",
     )
       .forEach((childNode) => this.loadOutfitNode(childNode));
+  }
 
-    // Load ships after outfits
-    rootNode.children.filter(
+  private loadDataFileShips(dataFile: DataFile): void {
+    dataFile.rootNode.children.filter(
       (childNode) => childNode.tokens[0].value === "ship",
     )
       .forEach((childNode) => this.loadShipNode(childNode));
