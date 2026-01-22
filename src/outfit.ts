@@ -5,6 +5,8 @@ import { isEsNumber, parseEsNumber } from "./parser.ts";
 
 export class Outfit {
   readonly name: string;
+  readonly displayName?: string;
+
   readonly attributes: Map<string, number> = new Map<string, number>();
 
   readonly gameData: GameData;
@@ -28,6 +30,7 @@ export class Outfit {
       const tokens = childNode.tokens;
 
       if (tokens.length >= 2) {
+
         if (!isEsNumber(tokens[1].value)) continue;
 
         this.attributes.set(tokens[0].value, parseEsNumber(tokens[1].value));
