@@ -33,6 +33,10 @@ export class ItemToken extends Token {
     this.value = value;
   }
 
+  isNumber(): boolean {
+    return isEsNumber(this.value);
+  }
+
   toNumber(): number {
     if (!isEsNumber(this.value)) {
       throw new Error("Could not convert token into a number");
