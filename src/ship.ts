@@ -159,7 +159,7 @@ export class Ship {
 
             this.outfits.set(outfit, count);
           });
-      } else console.warn(`Unsupported node: ${childNode.tokens[1].value}`);
+      } else console.warn(`Unsupported node: ${childNode.tokens[0].value}`);
     }
   }
 
