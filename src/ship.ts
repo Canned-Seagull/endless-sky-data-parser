@@ -122,7 +122,9 @@ export class Ship {
 
       // It is not recommended to derive a variant off another variant
       if (baseShip.isVariant) {
-        console.warn(`Deriving a variant ship ${this.variantName} off another variant ${this.baseName}`);
+        console.warn(
+          `Deriving a variant ship ${this.variantName} off another variant ${this.baseName}`,
+        );
       }
     }
 
