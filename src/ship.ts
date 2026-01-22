@@ -1,32 +1,112 @@
 import type { DataNode } from "./data_node.ts";
 import { errorAtLine } from "./error.ts";
 import type { GameData } from "./game_data.ts";
+import { Outfit } from "./outfit.ts";
 import { dataNodesToKeyNumberPairs } from "./utilities.ts";
 
 export class Ship {
-  readonly name: string;
-  readonly baseName: string;
-  readonly variantName?: string;
-  readonly isVariant: boolean;
+  /**
+   * Game data object in which the ship lives in.
+   */
+  public readonly gameData: GameData;
+  /**
+   * Data nodes from which ship data has been loaded.
+   */
+  public readonly dataNodes: DataNode[] = [];
 
-  private readonly baseAttributes: Map<string, number>[] = [];
-  private readonly addAttributes: Map<string, number>[] = [];
+  /**
+   * Whether the ship has any data loaded.
+   * Will be set to `true` the first time data is loaded.
+   */
+  public isInitialised: boolean = false;
 
-  readonly outfits: Map<string, number> = new Map<string, number>();
+  /**
+   * Whether or not the ship is a variant, or a base ship.
+   */
+  public isVariant: boolean = false;
 
-  readonly gameData: GameData;
-  readonly dataNode: DataNode;
+  /**
+   * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
+   */
+  public name: string = "";
+  /**
+   * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
+   */
+  public baseName: string = "";
+  /**
+   * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
+   */
+  public variantName?: string;
+  /**
+   * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
+   */
+  public baseAttributes?: Outfit;
+  /**
+   * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
+   */
+  public addAttributes?: Outfit;
 
-  constructor(gameData: GameData, dataNode: DataNode) {
+  /**
+   * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
+   */
+  public readonly outfits: Map<Outfit, number> = new Map();
+
+  /**
+   * Constructs a new empty ship with no data.
+   *
+   * @param {GameData} gameData - Game data object in which the ship lives in
+   */
+  constructor(gameData: GameData) {
+    this.gameData = gameData;
+  }
+
+  /**
+   * Get the computed attributes list, combining attributes of the ship and of outfits.
+   */
+  get attributes(): Outfit {
+    const attributes = new Outfit(this.gameData);
+
+    // Initialise the currently empty attributes with base attributes
+    if (this.baseAttributes) {
+      // Initialise with base attributes
+      attributes.mergeWith(this.baseAttributes);
+    } else if (this.isVariant) {
+      // If no base attributes and this is a variant, initialise with that
+      const baseShip = this.gameData.ships.get(this.baseName);
+      if (!baseShip) throw new Error("Base ship not found");
+
+      attributes.mergeWith(baseShip.attributes);
+    }
+
+    if (this.addAttributes) {
+      // Add the add attributes on the base attributes
+      attributes.mergeWith(this.addAttributes);
+    }
+
+    // For each outfit, add its attributes
+    this.outfits.forEach((count, outfit) =>
+      attributes.mergeWith(outfit, count)
+    );
+
+    return attributes;
+  }
+
+  /**
+   * Loads ship data from a data node.
+   *
+   * @param {DataNode} dataNode - Data node to load from
+   */
+  public loadDataNode(dataNode: DataNode): void {
+    this.dataNodes.push(dataNode);
+
+    this.isInitialised = true;
+
     if (dataNode.tokens.length < 2) {
       errorAtLine(
         dataNode.tokens[0].line,
         "Ship node has less than two tokens",
       );
     }
-
-    this.gameData = gameData;
-    this.dataNode = dataNode;
 
     this.baseName = dataNode.tokens[1].value;
 
@@ -37,7 +117,7 @@ export class Ship {
       this.variantName = dataNode.tokens[2].value;
 
       // Get base ship
-      const baseShip = gameData.ships.get(this.baseName);
+      const baseShip = this.gameData.ships.get(this.baseName);
       if (!baseShip) throw new Error("Base ship not found");
 
       // It is not recommended to derive a variant off another variant
@@ -50,70 +130,46 @@ export class Ship {
 
     for (const childNode of dataNode.children) {
       if (childNode.tokens[0].value === "attributes") {
-        // Set attributes
-        this.baseAttributes.push(dataNodesToKeyNumberPairs(childNode.children));
+        // Create base attributes if it does not exist yet
+        if (!this.baseAttributes) {
+          this.baseAttributes = new Outfit(this.gameData);
+        }
+
+        // Set attributes, merging with any existing
+        this.baseAttributes.loadDataNode(childNode);
       } else if (
         childNode.tokens[0].value === "add" &&
         childNode.tokens[1]?.value === "attributes"
       ) {
-        // Set add attributes
-        this.addAttributes.push(dataNodesToKeyNumberPairs(childNode.children));
+        // Create add attributes if it does not exist yet
+        if (!this.addAttributes) this.addAttributes = new Outfit(this.gameData);
+
+        // Set add attributes, merging with any existing
+        this.addAttributes.loadDataNode(childNode);
       } else if (childNode.tokens[0].value === "outfits") {
-        this.outfits = dataNodesToKeyNumberPairs(childNode.children, 1);
+        dataNodesToKeyNumberPairs(childNode.children, 1)
+          .forEach((count, outfitName) => {
+            const outfit = this.gameData.outfits.get(outfitName);
+            if (!outfit) throw new Error("Outfit not defined: " + outfitName);
+
+            this.outfits.set(outfit, count);
+          });
       } else console.warn("Unsupported node");
     }
   }
 
-  clone(): Ship {
-    return new Ship(this.gameData, this.dataNode);
-  }
+  /**
+   * Clones the ship object, which can be modified without affecting the original.
+   *
+   * @returns {Ship} - Cloned ship object
+   */
+  public clone(): Ship {
+    const clonedShip = new Ship(this.gameData);
 
-  get attributes(): Map<string, number> {
-    const attributes = new Map<string, number>();
-
-    if (this.isVariant) {
-      const baseShip = this.gameData.ships.get(this.baseName);
-      if (!baseShip) throw new Error("Base ship not found");
-
-      // Initialise attributes with the base ship's attributes
-      baseShip.attributes.forEach((value, attribute) =>
-        attributes.set(attribute, value)
-      );
-    }
-
-    // For each base attribute, override existing attribute
-    this.baseAttributes.forEach((base) => {
-      base.forEach((value, attribute) => attributes.set(attribute, value));
+    this.dataNodes.forEach((dataNode) => {
+      clonedShip.loadDataNode(dataNode);
     });
 
-    // For each add attribute, add on existing attribute
-    this.addAttributes.forEach((add) => {
-      add.forEach((value, attribute) =>
-        attributes.set(attribute, (attributes.get(attribute) ?? 0) + value)
-      );
-    });
-
-    // For each outfit, add on existing attribute
-    this.outfits.forEach((count, outfitName) => {
-      const outfit = this.gameData.outfits.get(outfitName);
-      if (!outfit) throw new Error("Outfit not found: " + outfitName);
-
-      outfit.attributes.forEach((value, attribute) =>
-        attributes.set(
-          attribute,
-          (attributes.get(attribute) ?? 0) + value * count,
-        )
-      );
-    });
-
-    return attributes;
-  }
-
-  getOutfitCount(outfitName: string): number {
-    return this.outfits.get(outfitName) ?? 0;
-  }
-
-  setOutfit(outfitName: string, count: number): void {
-    this.outfits.set(outfitName, count);
+    return clonedShip;
   }
 }

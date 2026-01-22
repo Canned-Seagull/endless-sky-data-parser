@@ -27,24 +27,17 @@ export class GameData {
   loadDataFile(dataFile: DataFile): void {
     const rootNode = dataFile.rootNode;
 
-    for (const childNode of rootNode.children) {
-      const nodeName = childNode.tokens[0].value;
+    // Load outfits first, as ships depend on them
+    rootNode.children.filter(
+      (childNode) => childNode.tokens[0].value === "outfit",
+    )
+      .forEach((childNode) => this.loadOutfitNode(childNode));
 
-      switch (nodeName) {
-        case "outfit":
-          this.loadOutfitNode(childNode);
-          break;
-        case "ship":
-          this.loadShipNode(childNode);
-          break;
-        default:
-          warnAtDataFileLine(
-            dataFile,
-            childNode.tokens[0].line,
-            "Unsupported node",
-          );
-      }
-    }
+    // Load ships after outfits
+    rootNode.children.filter(
+      (childNode) => childNode.tokens[0].value === "ship",
+    )
+      .forEach((childNode) => this.loadShipNode(childNode));
   }
 
   /**
@@ -70,7 +63,17 @@ export class GameData {
   }
 
   private loadShipNode(node: DataNode): void {
-    const ship = new Ship(this, node);
-    this.ships.set(ship.name, ship);
+    if (node.tokens.length < 2) throw new Error("Ship node with no name");
+
+    const shipName = node.tokens.length === 2
+      ? node.tokens[1].value // Base ship
+      : node.tokens[2].value; // Variant ship
+
+    // If the ship does not already exist, initialise an empty one
+    if (!this.ships.has(shipName)) {
+      this.ships.set(shipName, new Ship(this));
+    }
+
+    this.ships.get(shipName)?.loadDataNode(node);
   }
 }
