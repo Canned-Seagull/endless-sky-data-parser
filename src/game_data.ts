@@ -1,7 +1,6 @@
 import type { DataFile } from "./data_file.ts";
 import type { DataNode } from "./data_node.ts";
 import type { DataSource } from "./data_source.ts";
-import { warnAtDataFileLine } from "./error.ts";
 import { Outfit } from "./outfit.ts";
 import { Ship } from "./ship.ts";
 
