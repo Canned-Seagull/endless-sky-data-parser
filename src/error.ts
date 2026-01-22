@@ -1,7 +1,7 @@
 import type { DataFile } from "./data_file.ts";
 
 function prettyFileName(dataFile: DataFile): string {
-  return `${dataFile.dataSource?.getName() ?? ""}/${dataFile.path}`;
+  return `${dataFile.dataSource?.name ?? ""}/${dataFile.path}`;
 }
 
 export function errorAtLine(line: number, message: string): void {

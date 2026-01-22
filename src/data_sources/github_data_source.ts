@@ -32,10 +32,8 @@ export class GitHubDataSource implements DataSource {
 
   /**
    * Returns an identifier of this repository.
-   *
-   * @returns {string} Identifier of this repository.
    */
-  getName(): string {
+  get name(): string {
     return `${this.owner}/${this.repo}/${this.ref}`;
   }
 

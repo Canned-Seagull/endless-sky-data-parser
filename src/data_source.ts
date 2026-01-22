@@ -5,9 +5,9 @@ import type { DataFile } from "./data_file.ts";
  */
 export interface DataSource {
   /**
-   * Returns a human-readable name of the data source.
+   * A human-readable name of the data source.
    */
-  getName(): string;
+  name: string;
 
   /**
    * Data files in a source.
