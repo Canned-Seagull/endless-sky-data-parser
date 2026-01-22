@@ -57,8 +57,16 @@ export class GameData {
   }
 
   private loadOutfitNode(node: DataNode): void {
-    const outfit = new Outfit(this, node);
-    this.outfits.set(outfit.name, outfit);
+    if (node.tokens.length < 2) throw new Error("Outfit node with no name");
+
+    const outfitName = node.tokens[1].value;
+
+    // If the outfit does not already exist, initialise an empty one
+    if (!this.outfits.has(outfitName)) {
+      this.outfits.set(outfitName, new Outfit(this));
+    }
+
+    this.outfits.get(outfitName)?.loadDataNode(node);
   }
 
   private loadShipNode(node: DataNode): void {
