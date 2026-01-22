@@ -4,16 +4,19 @@ import type { DataSource } from "../data_source.ts";
 import { Octokit } from "octokit";
 
 export class GitHubDataSource implements DataSource {
-  readonly owner: string;
-  readonly repo: string;
-  readonly ref: string;
+  public readonly owner: string;
+  public readonly repo: string;
+  public readonly ref: string;
 
   /**
    * Whether or not the data has been loaded from the GitHub repository.
    */
   public loaded: boolean = false;
 
-  readonly dataFiles: Map<string, DataFile> = new Map<string, DataFile>();
+  public readonly dataFiles: Map<string, DataFile> = new Map<
+    string,
+    DataFile
+  >();
 
   /**
    * Constructs a loader that loads files from a GitHub repository.
@@ -38,7 +41,7 @@ export class GitHubDataSource implements DataSource {
   /**
    * Returns an identifier of this repository.
    */
-  get name(): string {
+  public get name(): string {
     return `${this.owner}/${this.repo}/${this.ref}`;
   }
 
@@ -47,7 +50,7 @@ export class GitHubDataSource implements DataSource {
    *
    * @returns {Promise<Map<string, DataFile>>} Map of paths to data files
    */
-  async loadData(): Promise<Map<string, DataFile>> {
+  public async loadData(): Promise<Map<string, DataFile>> {
     const octokit = new Octokit();
 
     const rootTree = await octokit.rest.git.getTree({

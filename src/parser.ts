@@ -14,7 +14,7 @@ export class Parser {
     this.tokens = tokens;
   }
 
-  parse(): DataNode {
+  public parse(): DataNode {
     const children = [];
 
     while (!this.peekEnd()) children.push(this.parseNode());
@@ -22,7 +22,7 @@ export class Parser {
     return new DataNode([], children);
   }
 
-  parseNode(): DataNode {
+  private parseNode(): DataNode {
     const indentation = this.consumeIndentation();
 
     const tokens = [];
@@ -115,11 +115,11 @@ export class Parser {
     return false;
   }
 
-  consume(): Token {
+  private consume(): Token {
     return this.tokens[this.currentPos++];
   }
 
-  consumeIndentation(): number {
+  private consumeIndentation(): number {
     let indentation = 0;
     while (this.peek().type !== TokenType.TOKEN) {
       if (this.peek().type === TokenType.EOF) break;
@@ -135,7 +135,7 @@ export class Parser {
     return indentation;
   }
 
-  isAtEnd(): boolean {
+  private isAtEnd(): boolean {
     return this.peek().type === TokenType.EOF;
   }
 }

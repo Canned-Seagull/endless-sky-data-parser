@@ -7,10 +7,10 @@ import { Parser } from "./parser.ts";
  * A file containing game data.
  */
 export class DataFile {
-  readonly path: string;
-  readonly content: string;
-  readonly dataSource?: DataSource;
-  readonly rootNode: DataNode;
+  public readonly path: string;
+  public readonly content: string;
+  public readonly dataSource?: DataSource;
+  public readonly rootNode: DataNode;
 
   /**
    * Constructs a new data file and parses its contents.

@@ -1,8 +1,8 @@
 import type { ItemToken } from "./lexer.ts";
 
 export class DataNode {
-  readonly tokens: ItemToken[] = [];
-  readonly children: DataNode[] = [];
+  public readonly tokens: ItemToken[] = [];
+  public readonly children: DataNode[] = [];
 
   constructor(tokens: ItemToken[], children: DataNode[]) {
     this.tokens = tokens;

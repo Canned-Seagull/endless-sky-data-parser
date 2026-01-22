@@ -10,9 +10,9 @@ export enum TokenType {
 }
 
 export abstract class Token {
-  abstract readonly type: TokenType;
-  readonly lexeme: string;
-  readonly line: number;
+  public abstract readonly type: TokenType;
+  public readonly lexeme: string;
+  public readonly line: number;
 
   constructor(
     lexeme: string,
@@ -24,8 +24,8 @@ export abstract class Token {
 }
 
 export class ItemToken extends Token {
-  readonly type = TokenType.TOKEN;
-  readonly value: string;
+  public readonly type = TokenType.TOKEN;
+  public readonly value: string;
 
   constructor(lexeme: string, line: number, value: string) {
     super(lexeme, line);
@@ -33,11 +33,11 @@ export class ItemToken extends Token {
     this.value = value;
   }
 
-  isNumber(): boolean {
+  public isNumber(): boolean {
     return isEsNumber(this.value);
   }
 
-  toNumber(): number {
+  public toNumber(): number {
     if (!isEsNumber(this.value)) {
       throw new Error("Could not convert token into a number");
     }
@@ -47,15 +47,15 @@ export class ItemToken extends Token {
 }
 
 export class IndentToken extends Token {
-  readonly type = TokenType.INDENT;
+  public readonly type = TokenType.INDENT;
 }
 
 export class NewlineToken extends Token {
-  readonly type = TokenType.NEWLINE;
+  public readonly type = TokenType.NEWLINE;
 }
 
 export class EofToken extends Token {
-  readonly type = TokenType.EOF;
+  public readonly type = TokenType.EOF;
 }
 
 export class Lexer {
@@ -71,7 +71,7 @@ export class Lexer {
     this.source = source;
   }
 
-  tokenise(): Token[] {
+  public tokenise(): Token[] {
     while (!this.isAtEnd()) {
       this.startPos = this.currentPos;
       this.next();
