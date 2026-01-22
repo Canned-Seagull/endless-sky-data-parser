@@ -12,6 +12,13 @@ export class GameData {
   public dataSources: DataSource[] = [];
 
   /**
+   * Returns whether at least one data source is loaded.
+   */
+  public get loaded(): boolean {
+    return this.dataSources.length > 0;
+  }
+
+  /**
    * Loads all the data within the data files in a data source.
    * @param {DataSource} dataSource - Source of the data
    */
@@ -37,15 +44,6 @@ export class GameData {
       (childNode) => childNode.tokens[0].value === "ship",
     )
       .forEach((childNode) => this.loadShipNode(childNode));
-  }
-
-  /**
-   * Returns whether at least one data source is loaded.
-   *
-   * @returns {boolean} - Whether the game as at least one data source loaded
-   */
-  public hasLoaded(): boolean {
-    return this.dataSources.length > 0;
   }
 
   private loadOutfitNode(node: DataNode): void {
