@@ -1,5 +1,6 @@
 import type { DataFile } from "./data_file.ts";
 import { errorAtDataFileLine } from "./error.ts";
+import { isEsNumber, parseEsNumber } from "./parser.ts";
 
 export enum TokenType {
   TOKEN,
@@ -30,6 +31,14 @@ export class ItemToken extends Token {
     super(lexeme, line);
 
     this.value = value;
+  }
+
+  toNumber(): number {
+    if (!isEsNumber(this.value)) {
+      throw new Error("Could not convert token into a number");
+    }
+
+    return parseEsNumber(this.value);
   }
 }
 
