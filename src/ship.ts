@@ -73,7 +73,7 @@ export class Ship {
     } else if (this.isVariant) {
       // If no base attributes and this is a variant, initialise with that
       const baseShip = this.gameData.ships.get(this.baseName);
-      if (!baseShip) throw new Error("Base ship not found");
+      if (!baseShip) throw new Error(`Base ship not found: ${this.baseName}`);
 
       attributes.mergeWith(baseShip.attributes);
     }
@@ -104,7 +104,7 @@ export class Ship {
     if (dataNode.tokens.length < 2) {
       errorAtLine(
         dataNode.tokens[0].line,
-        "Ship node has less than two tokens",
+        `Ship node has less than two tokens: ${dataNode.tokens[1].value}`,
       );
     }
 
@@ -118,11 +118,11 @@ export class Ship {
 
       // Get base ship
       const baseShip = this.gameData.ships.get(this.baseName);
-      if (!baseShip) throw new Error("Base ship not found");
+      if (!baseShip) throw new Error("Base ship not found: " + this.baseName);
 
       // It is not recommended to derive a variant off another variant
       if (baseShip.isVariant) {
-        console.warn("Deriving a variant ship off another variant");
+        console.warn(`Deriving a variant ship ${this.variantName} off another variant ${this.baseName}`);
       }
     }
 
@@ -150,11 +150,11 @@ export class Ship {
         dataNodesToKeyNumberPairs(childNode.children, 1)
           .forEach((count, outfitName) => {
             const outfit = this.gameData.outfits.get(outfitName);
-            if (!outfit) throw new Error("Outfit not defined: " + outfitName);
+            if (!outfit) throw new Error(`Outfit not defined: ${outfitName}`);
 
             this.outfits.set(outfit, count);
           });
-      } else console.warn("Unsupported node");
+      } else console.warn(`Unsupported node: ${childNode.tokens[1].value}`);
     }
   }
 
