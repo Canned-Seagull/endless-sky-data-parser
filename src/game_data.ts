@@ -6,16 +6,16 @@ import { Ship } from "./ship.ts";
 
 // Object containing all the data in the game
 export class GameData {
-  readonly outfits: Map<string, Outfit> = new Map<string, Outfit>();
-  readonly ships: Map<string, Ship> = new Map<string, Ship>();
+  public readonly outfits: Map<string, Outfit> = new Map<string, Outfit>();
+  public readonly ships: Map<string, Ship> = new Map<string, Ship>();
 
-  dataSource?: DataSource;
+  public dataSource?: DataSource;
 
   /**
    * Loads all the data within the data files in a data source.
    * @param {DataSource} dataSource - Source of the data
    */
-  async loadDataSource(dataSource: DataSource): Promise<void> {
+  public async loadDataSource(dataSource: DataSource): Promise<void> {
     this.dataSource = dataSource;
 
     const dataFiles = await dataSource.loadData();
@@ -23,7 +23,7 @@ export class GameData {
     dataFiles.forEach((file) => this.loadDataFile(file));
   }
 
-  loadDataFile(dataFile: DataFile): void {
+  public loadDataFile(dataFile: DataFile): void {
     const rootNode = dataFile.rootNode;
 
     // Load outfits first, as ships depend on them
@@ -44,7 +44,7 @@ export class GameData {
    *
    * @returns {boolean} Whether the game as at least one data source loaded
    */
-  hasLoaded(): boolean {
+  public hasLoaded(): boolean {
     return Boolean(this.dataSource);
   }
 
