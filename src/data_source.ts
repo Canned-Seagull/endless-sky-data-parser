@@ -15,6 +15,11 @@ export interface DataSource {
   dataFiles: Map<string, DataFile>;
 
   /**
+   * Whether or not the data source has been loaded.
+   */
+  loaded: boolean;
+
+  /**
    * Loads data from the source.
    */
   loadData(): Promise<Map<string, DataFile>>;

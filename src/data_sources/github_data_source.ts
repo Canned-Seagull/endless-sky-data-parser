@@ -8,6 +8,11 @@ export class GitHubDataSource implements DataSource {
   readonly repo: string;
   readonly ref: string;
 
+  /**
+   * Whether or not the data has been loaded from the GitHub repository.
+   */
+  public loaded: boolean = false;
+
   readonly dataFiles: Map<string, DataFile> = new Map<string, DataFile>();
 
   /**
@@ -67,6 +72,8 @@ export class GitHubDataSource implements DataSource {
           this.dataFiles.set(file.path, new DataFile(file.path, content, this));
         }),
     );
+
+    this.loaded = true;
 
     return this.dataFiles;
   }
