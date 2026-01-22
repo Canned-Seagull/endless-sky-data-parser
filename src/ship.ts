@@ -152,7 +152,10 @@ export class Ship {
         dataNodesToKeyNumberPairs(childNode.children, 1)
           .forEach((count, outfitName) => {
             const outfit = this.gameData.outfits.get(outfitName);
-            if (!outfit) throw new Error(`Outfit not defined: ${outfitName}`);
+            if (!outfit) {
+              console.warn(`Outfit not defined: ${outfitName}`);
+              return;
+            }
 
             this.outfits.set(outfit, count);
           });
