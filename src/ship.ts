@@ -49,7 +49,7 @@ export class Ship {
   /**
    * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
    */
-  public readonly outfits: Map<Outfit, number> = new Map();
+  public readonly outfits: Map<string, number> = new Map();
 
   /**
    * Constructs a new empty ship with no data.
@@ -84,9 +84,15 @@ export class Ship {
     }
 
     // For each outfit, add its attributes
-    this.outfits.forEach((count, outfit) =>
-      attributes.mergeWith(outfit, count)
-    );
+    this.outfits.forEach((count, outfitName) => {
+      const outfit = this.gameData.outfits.get(outfitName);
+      if (!outfit) {
+        console.warn(`Outfit not defined: ${outfitName}`);
+        return;
+      }
+
+      attributes.mergeWith(outfit, count);
+    });
 
     return attributes;
   }
@@ -150,13 +156,7 @@ export class Ship {
         this.addAttributes.loadDataNode(childNode);
       } else if (childNode.tokens[0].value === "outfits") {
         dataNodesToKeyNumberPairs(childNode.children, 1)
-          .forEach((count, outfitName) => {
-            const outfit = this.gameData.outfits.get(outfitName);
-            if (!outfit) {
-              console.warn(`Outfit not defined: ${outfitName}`);
-              return;
-            }
-
+          .forEach((count, outfit) => {
             this.outfits.set(outfit, count);
           });
       } else console.warn(`Unsupported node: ${childNode.tokens[0].value}`);
