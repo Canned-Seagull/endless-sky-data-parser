@@ -124,10 +124,11 @@ export class Ship {
 
       // Get base ship
       const baseShip = this.gameData.ships.get(this.baseName);
-      if (!baseShip) throw new Error("Base ship not found: " + this.baseName);
 
+      // Should be an error, but will be forgiving here
+      if (!baseShip) console.warn("Base ship not found: " + this.baseName);
       // It is not recommended to derive a variant off another variant
-      if (baseShip.isVariant) {
+      else if (baseShip.isVariant) {
         console.warn(
           `Deriving a variant ship ${this.variantName} off another variant ${this.baseName}`,
         );
