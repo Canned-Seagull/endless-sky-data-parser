@@ -112,4 +112,62 @@ export class Outfit {
       );
     });
   }
+
+  /**
+   * Calculates whether a ship represented by this outfit is valid.
+   * Most attributes cannot have a value below `0`, with exceptions.
+   *
+   * @returns {boolean} - Whether or not this ship is valid
+   */
+  public isValidShip(): boolean {
+    for (const [attribute, value] of this.attributes) {
+      // All the protection attributes that have a minimum value of -0.99
+      if (
+        (attribute === "shield protection" ||
+          attribute === "hull protection" ||
+          attribute === "energy protection" ||
+          attribute === "fuel protection" ||
+          attribute === "heat protection" ||
+          attribute === "piercing protection" ||
+          attribute === "force protection" ||
+          attribute === "discharge protection" ||
+          attribute === "drag protection" ||
+          attribute === "corrosion protection" ||
+          attribute === "inertia protection" ||
+          attribute === "ion protection" ||
+          attribute === "scramble protection" ||
+          attribute === "leak protection" ||
+          attribute === "burn protection" ||
+          attribute === "disruption protection" ||
+          attribute === "slowing protection") &&
+        value >= -0.99
+      ) continue;
+
+      // All the multiplier attributes that have a minimum value of -1
+      if (
+        (attribute === "hull multiplier" ||
+          attribute === "hull repair multiplier" ||
+          attribute === "hull energy multiplier" ||
+          attribute === "hull fuel multiplier" ||
+          attribute === "hull heat multiplier" ||
+          attribute === "cloaked repair multiplier" ||
+          attribute === "shield multiplier" ||
+          attribute === "shield generation multiplier" ||
+          attribute === "shield energy multiplier" ||
+          attribute === "shield fuel multiplier" ||
+          attribute === "shield heat multiplier" ||
+          attribute === "cloaked regen multiplier" ||
+          attribute === "acceleration multiplier" ||
+          attribute === "turn multiplier" ||
+          attribute === "turret turn multiplier") && value >= -1
+      ) continue;
+
+      // Any other attribute has a minimum value of 0
+      if (value >= 0) continue;
+
+      return false;
+    }
+
+    return true;
+  }
 }

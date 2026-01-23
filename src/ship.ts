@@ -165,6 +165,24 @@ export class Ship {
   }
 
   /**
+   * Whether or not you can install an outfit on this ship.
+   *
+   * @param {string} outfitName - Name of the outfit
+   * @param {number} [count=1] - Amount of the outfit to install
+   * @returns {boolean} - Whether or not you can install the outfits
+   */
+  public canInstallOutfit(outfitName: string, count: number = 1): boolean {
+    const outfit = this.gameData.outfits.get(outfitName);
+
+    if (!outfit) throw new Error(`Outfit not found: ${outfitName}`);
+
+    const attributes = this.attributes;
+    attributes.mergeWith(outfit, count);
+
+    return attributes.isValidShip();
+  }
+
+  /**
    * Installs an outfit on this ship.
    *
    * @param {string} outfitName - Name of the outfit
