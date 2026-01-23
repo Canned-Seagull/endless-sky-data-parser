@@ -165,6 +165,16 @@ export class Ship {
   }
 
   /**
+   * Installs an outfit on this ship.
+   *
+   * @param {string} outfitName - Name of the outfit
+   * @param {number} [count=1] - Amount of the outfit to install
+   */
+  public installOutfit(outfitName: string, count: number = 1): void {
+    this.outfits.set(outfitName, (this.outfits.get(outfitName) ?? 0) + count);
+  }
+
+  /**
    * Clones the ship object, which can be modified without affecting the original.
    *
    * @returns {Ship} - Cloned ship object
