@@ -28,14 +28,17 @@ export class GameData {
     const dataFiles = await dataSource.loadData();
 
     dataFiles.forEach((file) => this.loadDataFileOutfits(file));
-    dataFiles.forEach((file) => this.loadDataFileShips(file));
+    dataFiles.forEach((file) => this.loadDataFileBaseShips(file));
+    dataFiles.forEach((file) => this.loadDataFileVariantShips(file));
   }
 
   public loadDataFile(dataFile: DataFile): void {
     // Load outfits first, as ships depend on them
     this.loadDataFileOutfits(dataFile);
     // Load ships after outfits
-    this.loadDataFileShips(dataFile);
+    this.loadDataFileBaseShips(dataFile);
+    // Then, variants that must depend on base ships
+    this.loadDataFileVariantShips(dataFile);
   }
 
   private loadDataFileOutfits(dataFile: DataFile): void {
@@ -45,9 +48,18 @@ export class GameData {
       .forEach((childNode) => this.loadOutfitNode(childNode));
   }
 
-  private loadDataFileShips(dataFile: DataFile): void {
+  private loadDataFileBaseShips(dataFile: DataFile): void {
     dataFile.rootNode.children.filter(
-      (childNode) => childNode.tokens[0].value === "ship",
+      (childNode) =>
+        childNode.tokens[0].value === "ship" && childNode.tokens.length === 2,
+    )
+      .forEach((childNode) => this.loadShipNode(childNode));
+  }
+
+  private loadDataFileVariantShips(dataFile: DataFile): void {
+    dataFile.rootNode.children.filter(
+      (childNode) =>
+        childNode.tokens[0].value === "ship" && childNode.tokens.length >= 3,
     )
       .forEach((childNode) => this.loadShipNode(childNode));
   }
