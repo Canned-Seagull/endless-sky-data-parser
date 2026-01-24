@@ -102,7 +102,7 @@ export class GitHubDataSource implements DataSource {
           );
           this.sprites.set(
             name,
-            new Sprite(name, this),
+            new Sprite(name, file.path, this),
           );
         });
     }
