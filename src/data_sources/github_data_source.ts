@@ -96,9 +96,10 @@ export class GitHubDataSource implements DataSource {
           file.path.startsWith("images/") && file.type === "blob"
         )
         .forEach((file) => {
+          const name = file.path.slice(7);
           this.sprites.set(
-            file.path,
-            new Sprite(file.path.slice(7), this),
+            name,
+            new Sprite(name, this),
           );
         });
     }
