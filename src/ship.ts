@@ -45,6 +45,10 @@ export class Ship {
    * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
    */
   public addAttributes?: Outfit;
+  /**
+   * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
+   */
+  public thumbnail?: string;
 
   /**
    * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
@@ -160,6 +164,14 @@ export class Ship {
           .forEach((count, outfit) => {
             this.outfits.set(outfit, count);
           });
+      } else if (childNode.tokens.length >= 2) {
+        const childNodeName = childNode.tokens[0].value;
+
+        if (childNodeName === "thumbnail") {
+          this.thumbnail = childNode.tokens[1].value;
+        } else {
+          console.warn(`Unsupported node: ${childNodeName}`);
+        }
       } else console.warn(`Unsupported node: ${childNode.tokens[0].value}`);
     }
   }
