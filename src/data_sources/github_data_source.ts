@@ -117,6 +117,8 @@ export class GitHubDataSource implements DataSource {
    * @returns {string} - URL at which the resource can be found
    */
   public pathToUrl(path: string): string {
-    return `https://raw.githubusercontent.com/${this.owner}/${this.repo}/${this.ref}/${path}`;
+    return encodeURI(
+      `https://raw.githubusercontent.com/${this.owner}/${this.repo}/${this.ref}/${path}`,
+    );
   }
 }
