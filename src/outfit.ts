@@ -10,6 +10,8 @@ export class Outfit {
   public name?: string;
   public displayName?: string;
 
+  public thumbnail?: string;
+
   public readonly attributes: Map<string, number> = new Map<string, number>();
 
   /**
@@ -45,6 +47,8 @@ export class Outfit {
 
         if (childNodeName === "display name") {
           this.displayName = childNode.tokens[1].value;
+        } else if (childNodeName === "thumbnail") {
+          this.thumbnail = childNode.tokens[1].value;
         } else if (
           childNode.tokens[0].value === "category" ||
           childNodeName === "series" ||
@@ -68,7 +72,6 @@ export class Outfit {
           childNodeName === "cargo scan sound" ||
           childNodeName === "outfit scan sound" ||
           childNodeName === "flotsam sprite" ||
-          childNodeName === "thumbnail" ||
           childNodeName === "weapon" ||
           childNodeName === "ammo" ||
           childNodeName === "description" ||
