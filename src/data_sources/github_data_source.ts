@@ -96,7 +96,10 @@ export class GitHubDataSource implements DataSource {
           file.path.startsWith("images/") && file.type === "blob"
         )
         .forEach((file) => {
-          const name = file.path.slice(7);
+          const name = file.path.slice(7).replace(
+            /\.[^.]+$/,
+            "",
+          );
           this.sprites.set(
             name,
             new Sprite(name, this),
