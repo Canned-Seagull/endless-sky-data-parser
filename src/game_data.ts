@@ -3,11 +3,13 @@ import type { DataNode } from "./data_node.ts";
 import type { DataSource } from "./data_source.ts";
 import { Outfit } from "./outfit.ts";
 import { Ship } from "./ship.ts";
+import type { Sprite } from "./sprite.ts";
 
 // Object containing all the data in the game
 export class GameData {
   public readonly outfits: Map<string, Outfit> = new Map<string, Outfit>();
   public readonly ships: Map<string, Ship> = new Map<string, Ship>();
+  public readonly sprites: Map<string, Sprite> = new Map<string, Sprite>();
 
   public dataSources: DataSource[] = [];
 
@@ -25,11 +27,14 @@ export class GameData {
   public async loadDataSource(dataSource: DataSource): Promise<void> {
     this.dataSources.push(dataSource);
 
-    const dataFiles = await dataSource.loadData();
+    await dataSource.load();
 
-    dataFiles.forEach((file) => this.loadDataFileOutfits(file));
-    dataFiles.forEach((file) => this.loadDataFileBaseShips(file));
-    dataFiles.forEach((file) => this.loadDataFileVariantShips(file));
+    dataSource.sprites.forEach((sprite, name) =>
+      this.sprites.set(name, sprite)
+    );
+    dataSource.dataFiles.forEach((file) => this.loadDataFileOutfits(file));
+    dataSource.dataFiles.forEach((file) => this.loadDataFileBaseShips(file));
+    dataSource.dataFiles.forEach((file) => this.loadDataFileVariantShips(file));
   }
 
   public loadDataFile(dataFile: DataFile): void {

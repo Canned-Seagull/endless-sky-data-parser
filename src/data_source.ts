@@ -1,4 +1,5 @@
 import type { DataFile } from "./data_file.ts";
+import type { Sprite } from "./sprite.ts";
 
 /**
  * A source containing a collection of data files.
@@ -15,14 +16,19 @@ export interface DataSource {
   dataFiles: Map<string, DataFile>;
 
   /**
+   * Sprites in a source.
+   */
+  sprites: Map<string, Sprite>;
+
+  /**
    * Whether or not the data source has been loaded.
    */
   loaded: boolean;
 
   /**
-   * Loads data from the source.
+   * Loads the source.
    */
-  loadData(): Promise<Map<string, DataFile>>;
+  load(): Promise<void>;
 
   /**
    * Converts a path within a data source to a URL from which the resource at the path can be loaded.

@@ -5,6 +5,7 @@ export * from "./src/outfit.ts";
 export * from "./src/parser.ts";
 export * from "./src/serialiser.ts";
 export * from "./src/ship.ts";
+export * from "./src/sprite.ts";
 
 export * from "./src/data_source.ts";
 export * from "./src/data_file.ts";

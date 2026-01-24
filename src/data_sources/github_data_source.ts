@@ -1,5 +1,6 @@
 import { DataFile } from "../data_file.ts";
 import type { DataSource } from "../data_source.ts";
+import { Sprite } from "../sprite.ts";
 
 import { Octokit } from "octokit";
 
@@ -16,6 +17,14 @@ export class GitHubDataSource implements DataSource {
   public readonly dataFiles: Map<string, DataFile> = new Map<
     string,
     DataFile
+  >();
+
+  /**
+   * Sprites in this GitHub repository.
+   */
+  public readonly sprites: Map<string, Sprite> = new Map<
+    string,
+    Sprite
   >();
 
   /**
@@ -47,10 +56,8 @@ export class GitHubDataSource implements DataSource {
 
   /**
    * Loads the data from GitHub.
-   *
-   * @returns {Promise<Map<string, DataFile>>} Map of paths to data files
    */
-  public async loadData(): Promise<Map<string, DataFile>> {
+  public async load(): Promise<void> {
     const octokit = new Octokit();
 
     const rootTree = await octokit.rest.git.getTree({
@@ -60,25 +67,43 @@ export class GitHubDataSource implements DataSource {
       recursive: "true",
     });
 
+    // Load data
     const dataDir = rootTree.data.tree.find((file) => file.path === "data");
-
-    if (!dataDir) throw new Error("No data directory found");
-
-    await Promise.all(
-      rootTree.data.tree
-        .filter((file) => file.path.startsWith("data/") && file.type === "blob")
-        .map(async (file) => {
-          const content = await fetch(
-            this.pathToUrl(file.path),
+    if (dataDir) {
+      await Promise.all(
+        rootTree.data.tree
+          .filter((file) =>
+            file.path.startsWith("data/") && file.type === "blob"
           )
-            .then((response) => response.text());
-          this.dataFiles.set(file.path, new DataFile(file.path, content, this));
-        }),
-    );
+          .map(async (file) => {
+            const content = await fetch(
+              this.pathToUrl(file.path),
+            )
+              .then((response) => response.text());
+            this.dataFiles.set(
+              file.path,
+              new DataFile(file.path, content, this),
+            );
+          }),
+      );
+    }
+
+    // Load images
+    const imagesDir = rootTree.data.tree.find((file) => file.path === "images");
+    if (imagesDir) {
+      rootTree.data.tree
+        .filter((file) =>
+          file.path.startsWith("images/") && file.type === "blob"
+        )
+        .forEach((file) => {
+          this.sprites.set(
+            file.path,
+            new Sprite(file.path.slice(7), this),
+          );
+        });
+    }
 
     this.loaded = true;
-
-    return this.dataFiles;
   }
 
   /**
