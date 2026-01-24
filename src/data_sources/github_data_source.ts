@@ -69,7 +69,7 @@ export class GitHubDataSource implements DataSource {
         .filter((file) => file.path.startsWith("data/") && file.type === "blob")
         .map(async (file) => {
           const content = await fetch(
-            `https://raw.githubusercontent.com/${this.owner}/${this.repo}/${this.ref}/${file.path}`,
+            this.pathToUrl(file.path),
           )
             .then((response) => response.text());
           this.dataFiles.set(file.path, new DataFile(file.path, content, this));
@@ -79,5 +79,15 @@ export class GitHubDataSource implements DataSource {
     this.loaded = true;
 
     return this.dataFiles;
+  }
+
+  /**
+   * Converts a path within this repository to a GitHub URL from which the resource at the path can be loaded.
+   *
+   * @param {string} path - Path of the resource within the data source without the leading slash
+   * @returns {string} - URL at which the resource can be found
+   */
+  public pathToUrl(path: string): string {
+    return `https://raw.githubusercontent.com/${this.owner}/${this.repo}/${this.ref}/${path}`;
   }
 }

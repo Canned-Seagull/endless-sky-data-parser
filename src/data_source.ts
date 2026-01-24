@@ -23,4 +23,11 @@ export interface DataSource {
    * Loads data from the source.
    */
   loadData(): Promise<Map<string, DataFile>>;
+
+  /**
+   * Converts a path within a data source to a URL from which the resource at the path can be loaded.
+   *
+   * @param {string} path - Path of the resource within the data source without the leading slash
+   */
+  pathToUrl?(path: string): string;
 }
