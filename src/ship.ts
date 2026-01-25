@@ -40,6 +40,10 @@ export class Ship {
   /**
    * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
    */
+  public description?: string;
+  /**
+   * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
+   */
   public baseAttributes?: Outfit;
   /**
    * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
@@ -166,9 +170,12 @@ export class Ship {
           });
       } else if (childNode.tokens.length >= 2) {
         const childNodeName = childNode.tokens[0].value;
+        const valueNode = childNode.tokens[1];
 
-        if (childNodeName === "thumbnail") {
-          this.thumbnail = childNode.tokens[1].value;
+        if (childNodeName === "description") {
+          this.description = valueNode.value;
+        } else if (childNodeName === "thumbnail") {
+          this.thumbnail = valueNode.value;
         } else {
           console.warn(`Unsupported node: ${childNodeName}`);
         }
