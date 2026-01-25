@@ -79,8 +79,6 @@ export class Outfit {
           childNodeName === "flotsam sprite" ||
           childNodeName === "weapon" ||
           childNodeName === "ammo" ||
-          childNodeName === "cost" ||
-          childNodeName === "mass" ||
           childNodeName === "licenses" ||
           childNodeName === "jump range"
         ) {
