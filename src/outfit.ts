@@ -10,6 +10,8 @@ export class Outfit {
   public name?: string;
   public displayName?: string;
 
+  public description?: string;
+
   public thumbnail?: string;
 
   public readonly attributes: Map<string, number> = new Map<string, number>();
@@ -44,11 +46,14 @@ export class Outfit {
     for (const childNode of dataNode.children) {
       if (childNode.tokens.length >= 2) {
         const childNodeName = childNode.tokens[0].value;
+        const valueNode = childNode.tokens[1];
 
-        if (childNodeName === "display name") {
-          this.displayName = childNode.tokens[1].value;
+        if (childNodeName === "description") {
+          this.description = valueNode.value;
+        } else if (childNodeName === "display name") {
+          this.displayName = valueNode.value;
         } else if (childNodeName === "thumbnail") {
-          this.thumbnail = childNode.tokens[1].value;
+          this.thumbnail = valueNode.value;
         } else if (
           childNode.tokens[0].value === "category" ||
           childNodeName === "series" ||
