@@ -1,6 +1,6 @@
 import type { DataFile } from "./data_file.ts";
 import { DataNode } from "./data_node.ts";
-import { errorAtDataFileLine, warnAtDataFileLine } from "./error.ts";
+import { warnAtDataFileLine } from "./error.ts";
 import type { Token } from "./lexer.ts";
 import { ItemToken, TokenType } from "./lexer.ts";
 
@@ -62,7 +62,7 @@ export class Parser {
         nextNextIndentation > indentation &&
         nextNextIndentation !== nextIndentation
       ) {
-        errorAtDataFileLine(
+        warnAtDataFileLine(
           this.dataFile,
           this.peek().line,
           "Unequal indentation",
