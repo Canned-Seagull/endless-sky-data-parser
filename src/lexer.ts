@@ -68,7 +68,7 @@ export class Lexer {
 
   constructor(dataFile: DataFile, source: string) {
     this.dataFile = dataFile;
-    this.source = source;
+    this.source = source.replaceAll("\r\n", "\n");
   }
 
   public tokenise(): Token[] {
