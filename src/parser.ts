@@ -1,6 +1,6 @@
 import type { DataFile } from "./data_file.ts";
 import { DataNode } from "./data_node.ts";
-import { errorAtDataFileLine } from "./error.ts";
+import { errorAtDataFileLine, warnAtDataFileLine } from "./error.ts";
 import type { Token } from "./lexer.ts";
 import { ItemToken, TokenType } from "./lexer.ts";
 
@@ -33,14 +33,12 @@ export class Parser {
     }
 
     if (this.isAtEnd()) {
-      errorAtDataFileLine(
+      warnAtDataFileLine(
         this.dataFile,
         this.peek().line,
         "Missing newline at the end of file",
       );
-    }
-
-    this.consume();
+    } else this.consume();
 
     const children = [];
 
