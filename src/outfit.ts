@@ -14,6 +14,8 @@ export class Outfit {
 
   public category?: string;
 
+  public licenses: string[] = [];
+
   public thumbnail?: string;
 
   public readonly attributes: Map<string, number> = new Map<string, number>();
@@ -56,6 +58,10 @@ export class Outfit {
           this.description = valueNode.value;
         } else if (childNodeName === "display name") {
           this.displayName = valueNode.value;
+        } else if (childNodeName === "licenses") {
+          childNode.children.forEach((licenseNode) => {
+            this.licenses.push(licenseNode.tokens[0].value);
+          });
         } else if (childNodeName === "thumbnail") {
           this.thumbnail = valueNode.value;
         } else if (
