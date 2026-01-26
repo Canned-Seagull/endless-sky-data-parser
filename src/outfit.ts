@@ -185,4 +185,19 @@ export class Outfit {
 
     return true;
   }
+
+  /**
+   * Clones the outfit object, which can be modified without affecting the original.
+   *
+   * @returns {Outfit} - Cloned outfit object
+   */
+  public clone(): Outfit {
+    const clonedOutfit = new Outfit(this.gameData);
+
+    this.dataNodes.forEach((dataNode) => {
+      clonedOutfit.loadDataNode(dataNode);
+    });
+
+    return clonedOutfit;
+  }
 }
