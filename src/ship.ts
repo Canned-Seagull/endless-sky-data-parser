@@ -79,11 +79,10 @@ export class Ship {
       // Initialise with base attributes
       attributes.mergeWith(this.baseAttributes);
     } else if (this.isVariant) {
-      // If no base attributes and this is a variant, initialise with that
+      // If no base attributes and this is a variant, initialise with the base ship if it exists
       const baseShip = this.gameData.ships.get(this.baseName);
-      if (!baseShip) throw new Error(`Base ship not found: ${this.baseName}`);
-
-      attributes.mergeWith(baseShip.attributes);
+      if (!baseShip) console.warn(`Base ship not found: ${this.baseName}`);
+      else attributes.mergeWith(baseShip.attributes);
     }
 
     if (this.addAttributes) {
