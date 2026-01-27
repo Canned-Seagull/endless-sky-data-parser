@@ -192,12 +192,9 @@ export class Outfit {
    * @returns {Outfit} - Cloned outfit object
    */
   public clone(): Outfit {
-    const clonedOutfit = new Outfit(this.gameData);
-
-    this.dataNodes.forEach((dataNode) => {
-      clonedOutfit.loadDataNode(dataNode);
-    });
-
-    return clonedOutfit;
+    return Object.setPrototypeOf(
+      structuredClone(this),
+      Object.getPrototypeOf(this),
+    );
   }
 }
