@@ -72,17 +72,17 @@ export class Ship {
    * Get the computed attributes list, combining attributes of the ship and of outfits.
    */
   get attributes(): Outfit {
-    const attributes = new Outfit(this.gameData);
+    let attributes = new Outfit(this.gameData);
 
     // Initialise the currently empty attributes with base attributes
     if (this.baseAttributes) {
       // Initialise with base attributes
-      attributes.mergeWith(this.baseAttributes);
+      attributes = this.baseAttributes.clone();
     } else if (this.isVariant) {
       // If no base attributes and this is a variant, initialise with the base ship if it exists
       const baseShip = this.gameData.ships.get(this.baseName);
       if (!baseShip) console.warn(`Base ship not found: ${this.baseName}`);
-      else attributes.mergeWith(baseShip.attributes);
+      else attributes = baseShip.attributes.clone();
     }
 
     if (this.addAttributes) {
