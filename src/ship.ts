@@ -216,12 +216,9 @@ export class Ship {
    * @returns {Ship} - Cloned ship object
    */
   public clone(): Ship {
-    const clonedShip = new Ship(this.gameData);
-
-    this.dataNodes.forEach((dataNode) => {
-      clonedShip.loadDataNode(dataNode);
-    });
-
-    return clonedShip;
+    return Object.setPrototypeOf(
+      structuredClone(this),
+      Object.getPrototypeOf(this),
+    );
   }
 }
