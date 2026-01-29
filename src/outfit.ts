@@ -48,7 +48,15 @@ export class Outfit {
     }
 
     for (const childNode of dataNode.children) {
-      if (childNode.tokens.length >= 2) {
+      if (childNode.tokens.length === 1) {
+        const childNodeName = childNode.tokens[0].value;
+
+        if (childNodeName === "licenses") {
+          childNode.children.forEach((licenseNode) => {
+            this.licenses.push(licenseNode.tokens[0].value);
+          });
+        }
+      } else if (childNode.tokens.length >= 2) {
         const childNodeName = childNode.tokens[0].value;
         const valueNode = childNode.tokens[1];
 
@@ -58,10 +66,6 @@ export class Outfit {
           this.description = valueNode.value;
         } else if (childNodeName === "display name") {
           this.displayName = valueNode.value;
-        } else if (childNodeName === "licenses") {
-          childNode.children.forEach((licenseNode) => {
-            this.licenses.push(licenseNode.tokens[0].value);
-          });
         } else if (childNodeName === "thumbnail") {
           this.thumbnail = valueNode.value;
         } else if (
