@@ -216,9 +216,23 @@ export class Ship {
    * @returns {Ship} - Cloned ship object
    */
   public clone(): Ship {
-    return Object.setPrototypeOf(
-      structuredClone(this),
-      Object.getPrototypeOf(this),
-    );
+    const ship = new Ship(this.gameData);
+
+    // Copy data nodes by reference
+    this.dataNodes.forEach((dataNode) => ship.dataNodes.push(dataNode));
+
+    // Copy all the other properties by value
+    ship.isInitialised = this.isInitialised;
+    ship.isVariant = this.isVariant;
+    ship.name = this.name;
+    ship.baseName = this.baseName;
+    ship.variantName = this.variantName;
+    ship.description = this.description;
+    ship.baseAttributes = this.baseAttributes?.clone();
+    ship.addAttributes = this.addAttributes?.clone();
+    ship.thumbnail = this.thumbnail;
+    this.outfits.forEach((count, outfit) => ship.outfits.set(outfit, count));
+
+    return ship;
   }
 }
