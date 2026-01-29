@@ -192,9 +192,23 @@ export class Outfit {
    * @returns {Outfit} - Cloned outfit object
    */
   public clone(): Outfit {
-    return Object.setPrototypeOf(
-      structuredClone(this),
-      Object.getPrototypeOf(this),
+    const outfit = new Outfit(this.gameData);
+
+    // Copy data nodes by reference
+    this.dataNodes.forEach((dataNode) => outfit.dataNodes.push(dataNode));
+
+    // Copy all the other properties by value
+    outfit.isInitialised = this.isInitialised;
+    outfit.name = this.name;
+    outfit.displayName = this.displayName;
+    outfit.description = this.description;
+    outfit.category = this.category;
+    this.licenses.forEach((license) => outfit.licenses.push(license));
+    outfit.thumbnail = this.thumbnail;
+    this.attributes.forEach((value, attribute) =>
+      outfit.attributes.set(attribute, value)
     );
+
+    return outfit;
   }
 }
