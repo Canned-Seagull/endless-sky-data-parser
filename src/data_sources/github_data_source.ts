@@ -96,13 +96,31 @@ export class GitHubDataSource implements DataSource {
           file.path.startsWith("images/") && file.type === "blob"
         )
         .forEach((file) => {
-          const name = file.path.slice(7).replace(
-            /\.[^.]+$/,
-            "",
+          const match = file.path.slice(7).match(
+            /(?<name>[^-+^~.]+)(?<blendingMode>[-+^~]?)(?<frameNumber>\d*)(?<swizzleMaskFlag>(@sw)?)(?<size>(@(1|2)x)?)\.(?<extension>\w+)/,
           );
-          this.sprites.set(
-            name,
-            new Sprite(name, file.path, this),
+
+          if (!match || !match.groups) {
+            throw new Error(`Invalid sprite path: ${file.path}`);
+          }
+
+          if (!this.sprites.get(match.groups.name)) {
+            this.sprites.set(match.groups.name, new Sprite(match.groups.name));
+          }
+
+          const sprite = this.sprites.get(match.groups.name)!;
+
+          sprite.addFrame(
+            this,
+            {
+              path: file.path,
+              name: match.groups.name,
+              blendingMode: match.groups.blendingMode,
+              frameNumber: match.groups.frameNumber,
+              swizzleMaskFlag: match.groups.swizzleMaskFlag,
+              size: match.groups.size,
+              extension: match.groups.extension,
+            },
           );
         });
     }

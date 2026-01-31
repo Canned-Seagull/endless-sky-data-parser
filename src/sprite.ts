@@ -1,20 +1,25 @@
 import type { DataSource } from "./data_source.ts";
+import type { SpriteImageParams } from "./sprite_image.ts";
+import { SpriteImage } from "./sprite_image.ts";
 
 export class Sprite {
   public name: string;
 
-  private path: string;
-  private dataSource: DataSource;
+  public frames: SpriteImage[] = [];
 
-  constructor(name: string, path: string, dataSource: DataSource) {
+  constructor(name: string) {
     this.name = name;
-    this.path = path;
-    this.dataSource = dataSource;
   }
 
-  public get url(): string | undefined {
-    if (!this.dataSource.pathToUrl) return undefined;
-
-    return this.dataSource.pathToUrl(`${this.path}`);
+  public addFrame(
+    dataSource: DataSource,
+    imageParams: SpriteImageParams,
+  ): void {
+    this.frames.push(
+      new SpriteImage(
+        dataSource,
+        imageParams,
+      ),
+    );
   }
 }
