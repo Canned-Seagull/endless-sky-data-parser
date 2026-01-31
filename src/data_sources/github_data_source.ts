@@ -97,7 +97,7 @@ export class GitHubDataSource implements DataSource {
         )
         .forEach((file) => {
           const match = file.path.slice(7).match(
-            /(?<name>[^-+^~.]+)(?<blendingMode>[-+^~]?)(?<frameNumber>\d*)(?<swizzleMaskFlag>(@sw)?)(?<size>(@(1|2)x)?)\.(?<extension>\w+)/,
+            /(?<name>([^-+^~.]|([-+^~](?=[^\d@])))+)(?<blendingMode>[-+^~]?)(?<frameNumber>\d*)(?<swizzleMaskFlag>(@sw)?)(?<size>(@(1|2)x)?)\.(?<extension>\w+)/,
           );
 
           if (!match || !match.groups) {
