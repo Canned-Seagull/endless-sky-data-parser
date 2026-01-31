@@ -11,6 +11,28 @@ export class Sprite {
     this.name = name;
   }
 
+  /**
+   * The most representative image of this sprite.
+   * If the sprite is animated, returns the first frame.
+   * If the sprite has multiple sizes, returns the image with the original size.
+   *
+   * For convenience only, has no in-game significance.
+   */
+  public get mainImage(): SpriteImage {
+    const frame = this.frames.find((frame) =>
+      // First frame
+      (!frame.frameNumber || Number(frame.frameNumber) === 0) &&
+      // Original size
+      (!frame.size || frame.size === "@1x")
+    );
+
+    if (!frame) {
+      throw new Error(`Could not find main image for sprite: ${this.name}`);
+    }
+
+    return frame;
+  }
+
   public addFrame(
     dataSource: DataSource,
     imageParams: SpriteImageParams,
