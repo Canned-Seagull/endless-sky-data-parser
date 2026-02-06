@@ -117,7 +117,7 @@ export class GitHubDataSource implements DataSource {
             });
 
           if (!this.sprites.get(groups.name)) {
-            this.sprites.set(groups.name, new Sprite(name));
+            this.sprites.set(groups.name, new Sprite(groups.name));
           }
 
           const sprite = this.sprites.get(groups.name)!;
