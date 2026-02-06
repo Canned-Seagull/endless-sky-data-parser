@@ -96,30 +96,42 @@ export class GitHubDataSource implements DataSource {
           file.path.startsWith("images/") && file.type === "blob"
         )
         .forEach((file) => {
-          const match = file.path.slice(7).match(
-            /(?<name>([^-+^~.@]|([-+^~](?=[^\d@])))+)(?<blendingMode>[-+^~]?)(?<frameNumber>\d*)(?<swizzleMaskFlag>(@sw)?)(?<size>(@(1|2)x)?)\.(?<extension>\w+)/,
-          );
+          // Reverse the name for easier processing
+          const match = file.path.slice(7).split("").toReversed().join("")
+            .match(
+              /^(?<extension>\w+)\.(?<size>(x(1|2)@)?)(?<swizzleMaskFlag>(ws@)?)(?<frameNumber>\d*)(?<blendingMode>[-+^~]?)(?<name>.+)$/,
+            );
 
-          if (!match || !match.groups) {
+          const groups = match?.groups;
+
+          if (!match || !groups) {
             throw new Error(`Invalid sprite path: ${file.path}`);
           }
 
-          if (!this.sprites.get(match.groups.name)) {
-            this.sprites.set(match.groups.name, new Sprite(match.groups.name));
+          // Reverse all the matches back to the original
+          Object.keys(groups)
+            .forEach((key) => {
+              if (groups[key]) {
+                groups[key] = groups[key].split("").toReversed().join("");
+              }
+            });
+
+          if (!this.sprites.get(groups.name)) {
+            this.sprites.set(groups.name, new Sprite(name));
           }
 
-          const sprite = this.sprites.get(match.groups.name)!;
+          const sprite = this.sprites.get(groups.name)!;
 
           sprite.addFrame(
             this,
             {
               path: file.path,
-              name: match.groups.name,
-              blendingMode: match.groups.blendingMode,
-              frameNumber: match.groups.frameNumber,
-              swizzleMaskFlag: match.groups.swizzleMaskFlag,
-              size: match.groups.size,
-              extension: match.groups.extension,
+              name: groups.name,
+              blendingMode: groups.blendingMode,
+              frameNumber: groups.frameNumber,
+              swizzleMaskFlag: groups.swizzleMaskFlag,
+              size: groups.size,
+              extension: groups.extension,
             },
           );
         });
