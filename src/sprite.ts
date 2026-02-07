@@ -68,4 +68,21 @@ export class Sprite {
       ),
     );
   }
+
+  /**
+   * Clones the sprite object, which can be modified without affecting the original.
+   *
+   * @returns {Sprite} - Cloned sprite object
+   */
+  public clone(): Sprite {
+    const sprite = new Sprite(this.name);
+
+    sprite.frameRate = this.frameRate;
+
+    this.frames.forEach((frame) => {
+      sprite.frames.push(frame);
+    });
+
+    return sprite;
+  }
 }
