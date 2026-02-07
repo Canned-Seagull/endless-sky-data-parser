@@ -99,7 +99,7 @@ export class GitHubDataSource implements DataSource {
           // Reverse the name for easier processing
           const match = file.path.slice(7).split("").toReversed().join("")
             .match(
-              /^(?<extension>\w+)\.(?<size>(x(1|2)@)?)(?<swizzleMaskFlag>(ws@)?)(?<frameNumber>\d*)(?<blendingMode>[-+^~]?)(?<name>.+)$/,
+              /^(?<extension>\w+)\.(?<size>(x(1|2)@)?)(?<swizzleMaskFlag>(ws@)?)(?<frameNumber>(\d+(?=[-+^~]))?)(?<blendingMode>[-+^~]?)(?<name>.+)$/,
             );
 
           const groups = match?.groups;
