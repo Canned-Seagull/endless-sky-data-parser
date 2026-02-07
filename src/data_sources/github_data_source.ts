@@ -136,7 +136,9 @@ export class GitHubDataSource implements DataSource {
                 ? BlendingMode.HALF_ADDITIVE_BLENDING
                 : undefined));
 
-          const frameNumber = parseEsNumber(groups.frameNumber);
+          const frameNumber = groups.frameNumber
+            ? parseEsNumber(groups.frameNumber)
+            : undefined;
 
           const isSwizzleMask = Boolean(groups.swizzleMaskFlag);
 
