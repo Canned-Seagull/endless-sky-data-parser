@@ -33,6 +33,25 @@ export class Sprite {
     return frame;
   }
 
+  /**
+   * Gets all the animation frames for the specified size of this sprite.
+   *
+   * @param {number} size - Resolution of the frame
+   * @returns {SpriteImage[]} - Frames of the animation in order
+   */
+  public getSpriteFrames(size: 1 | 2 = 1): SpriteImage[] {
+    const frames: SpriteImage[] = [];
+
+    this.frames.forEach((frame) => {
+      // If the frame has no size, default to `@1x`
+      if (frame.frameNumber && (frame.size || 1) === size) {
+        frames[frame.frameNumber] = frame;
+      }
+    });
+
+    return frames;
+  }
+
   public addFrame(
     dataSource: DataSource,
     imageParams: SpriteImageParams,
