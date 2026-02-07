@@ -5,6 +5,11 @@ import { SpriteImage } from "./sprite_image.ts";
 export class Sprite {
   public name: string;
 
+  /**
+   * Frame rate, in frames per second.
+   */
+  public frameRate?: number;
+
   public frames: SpriteImage[] = [];
 
   constructor(name: string) {
