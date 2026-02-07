@@ -44,7 +44,7 @@ export class Sprite {
 
     this.frames.forEach((frame) => {
       // If the frame has no size, default to `@1x`
-      if (frame.frameNumber && (frame.size || 1) === size) {
+      if (frame.frameNumber !== undefined && (frame.size || 1) === size) {
         frames[frame.frameNumber] = frame;
       }
     });
