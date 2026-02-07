@@ -1,13 +1,19 @@
 import type { DataSource } from "./data_source.ts";
 
+export enum BlendingMode {
+  ALPHA_BLENDING,
+  ADDITIVE_BLENDING,
+  HALF_ADDITIVE_BLENDING,
+}
+
 export interface SpriteImageParams {
   path: string;
   name: string;
   extension: string;
-  blendingMode?: string;
-  frameNumber?: string;
-  swizzleMaskFlag?: string;
-  size?: string;
+  blendingMode?: BlendingMode;
+  frameNumber?: number;
+  isSwizzleMask: boolean;
+  size?: number;
 }
 
 export class SpriteImage {
@@ -17,14 +23,14 @@ export class SpriteImage {
   public name: string;
   public extension: string;
 
-  public blendingMode?: string;
-  public frameNumber?: string;
-  public swizzleMaskFlag?: string;
-  public size?: string;
+  public blendingMode?: BlendingMode;
+  public frameNumber?: number;
+  public isSwizzleMask: boolean;
+  public size?: number;
 
   constructor(
     dataSource: DataSource,
-    { path, name, extension, blendingMode, frameNumber, swizzleMaskFlag, size }:
+    { path, name, extension, blendingMode, frameNumber, isSwizzleMask, size }:
       SpriteImageParams,
   ) {
     this.dataSource = dataSource;
@@ -33,7 +39,7 @@ export class SpriteImage {
     this.name = name;
     this.blendingMode = blendingMode;
     this.frameNumber = frameNumber;
-    this.swizzleMaskFlag = swizzleMaskFlag;
+    this.isSwizzleMask = isSwizzleMask;
     this.size = size;
     this.extension = extension;
   }

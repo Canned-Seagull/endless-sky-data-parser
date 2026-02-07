@@ -1,6 +1,8 @@
 import { DataFile } from "../data_file.ts";
 import type { DataSource } from "../data_source.ts";
+import { parseEsNumber } from "../parser.ts";
 import { Sprite } from "../sprite.ts";
+import { BlendingMode } from "../sprite_image.ts";
 
 import { Octokit } from "octokit";
 
@@ -122,16 +124,40 @@ export class GitHubDataSource implements DataSource {
 
           const sprite = this.sprites.get(groups.name)!;
 
+          const path = file.path;
+
+          const name = groups.name;
+
+          const blendingMode = groups.blendingMode === "-"
+            ? BlendingMode.ALPHA_BLENDING
+            : (groups.blendingMode === "+"
+              ? BlendingMode.ADDITIVE_BLENDING
+              : ((groups.blendingMode === "^" || groups.blendingMode === "~")
+                ? BlendingMode.HALF_ADDITIVE_BLENDING
+                : undefined));
+
+          const frameNumber = parseEsNumber(groups.frameNumber);
+
+          const isSwizzleMask = Boolean(groups.swizzleMaskFlag);
+
+          const size = groups.size
+            ? parseEsNumber(
+              groups.size.match(/(?<=@)(1|2)(?=x)/)?.[0] ?? "1",
+            )
+            : undefined;
+
+          const extension = groups.extension;
+
           sprite.addFrame(
             this,
             {
-              path: file.path,
-              name: groups.name,
-              blendingMode: groups.blendingMode,
-              frameNumber: groups.frameNumber,
-              swizzleMaskFlag: groups.swizzleMaskFlag,
-              size: groups.size,
-              extension: groups.extension,
+              path,
+              name,
+              blendingMode,
+              frameNumber,
+              isSwizzleMask,
+              size,
+              extension,
             },
           );
         });

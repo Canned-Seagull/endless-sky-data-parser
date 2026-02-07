@@ -23,7 +23,7 @@ export class Sprite {
       // First frame
       (!frame.frameNumber || Number(frame.frameNumber) === 0) &&
       // Original size
-      (!frame.size || frame.size === "@1x")
+      (!frame.size || frame.size === 1)
     );
 
     if (!frame) {
