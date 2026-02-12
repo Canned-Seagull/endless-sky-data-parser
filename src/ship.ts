@@ -60,10 +60,6 @@ export class Ship {
    * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
    */
   public selfThumbnail?: string;
-  /**
-   * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
-   */
-  public thumbnail?: string;
 
   /**
    * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
