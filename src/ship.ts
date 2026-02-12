@@ -50,6 +50,17 @@ export class Ship {
    */
   public addAttributes?: Outfit;
   /**
+   * The name of the thumbnail sprite of the ship if defined.
+   * Corresponds to the `thumbnail` node.
+   *
+   * Only takes into account thumbnails directly defined on this ship,
+   * will not consider thumbnails defined on a variant's base ship.
+   * For most purposes, access thumbnails using the `thumbnail` getter instead.
+   *
+   * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
+   */
+  public selfThumbnail?: string;
+  /**
    * See the [Endless Sky wiki](https://github.com/endless-sky/endless-sky/wiki/).
    */
   public thumbnail?: string;
@@ -102,6 +113,29 @@ export class Ship {
     });
 
     return attributes;
+  }
+
+  /**
+   * If this is a variant, returns the base ship object from game data.
+   * Returns `undefined` if this is not a variant, or if the base ship was not found.
+   */
+  get baseShip(): Ship | undefined {
+    if (!this.isVariant) return undefined;
+
+    const baseShip = this.gameData.ships.get(this.baseName);
+    if (!baseShip) console.warn(`Base ship not found: ${this.baseName}`);
+
+    return baseShip;
+  }
+
+  /**
+   * Get the name of the thumbnail sprite if defined.
+   *
+   * If this is a variant ship, self thumbnail will be used if defined.
+   * Otherwise, returns base ship thumbnail.
+   */
+  get thumbnail(): string | undefined {
+    return this.selfThumbnail ?? this.baseShip?.thumbnail;
   }
 
   /**
@@ -174,7 +208,7 @@ export class Ship {
         if (childNodeName === "description") {
           this.description = valueNode.value;
         } else if (childNodeName === "thumbnail") {
-          this.thumbnail = valueNode.value;
+          this.selfThumbnail = valueNode.value;
         } else {
           console.warn(`Unsupported node: ${childNodeName}`);
         }
@@ -230,7 +264,7 @@ export class Ship {
     ship.description = this.description;
     ship.baseAttributes = this.baseAttributes?.clone();
     ship.addAttributes = this.addAttributes?.clone();
-    ship.thumbnail = this.thumbnail;
+    ship.selfThumbnail = this.selfThumbnail;
     this.outfits.forEach((count, outfit) => ship.outfits.set(outfit, count));
 
     return ship;
